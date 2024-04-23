@@ -17,7 +17,7 @@ class Comments(StatesGroup):
 
 
 @comment_router.callback_query(F.data == 'comment')
-async def start_comment(callback : types.CallbackQuery, state: FSMContext):
+async def start_comment(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("Как вас зовут?")
     await state.set_state(Comments.name)
 
@@ -69,11 +69,11 @@ async def load_clean(message: types.Message, state: FSMContext):
 @comment_router.message(Comments.extra_comments)
 async def load_extra_comment(message: types.Message, state: FSMContext):
     await state.update_data(extra_comments=message.text)
-    data = await state.get_data()
-    print("~",data)
+    data = state.get_data()
+    print("~", data)
     await database.execute(
-        "INSERT INTO survey (name, contacts, date, quality_food, clean, EXTRA_COMMENTS)"
-        "VALUES (?,?,?,?,?,?)",
+        "INSERT INTO survey (name, contacts, date, quality_food, clean, EXTRA_COMMENTS) VALUES (?,?,?,?,?,?)",
         (data['name'], data['contacts'], data['date'], data['quality_food'], data['clean'], data['extra_comments']))
-    await message.answer("Спасибо за ваш отзыв!/n""Всего доброго")
+    await message.answer('Спасибо за ваш отзыв!\n'
+                         'Всего доброго')
     await state.clear()
